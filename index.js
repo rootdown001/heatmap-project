@@ -42,7 +42,7 @@ d3.json("https://raw.githubusercontent.com/freeCodeCamp/ProjectReferenceData/mas
 
     // - RUN THROUGH DATA AND CREATE PLOT-
     // add circles with x, y values
-    svg.selectAll("circle")
+    //svg.selectAll("circle")
 
  
 //     // -AXIS-
