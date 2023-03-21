@@ -50,8 +50,9 @@ const colorOne = "#963B00";
 const colorTwo = "#6874FF";
 
 // enter d3.json api
-d3.json("https://raw.githubusercontent.com/freeCodeCamp/ProjectReferenceData/master/cyclist-data.json")
+d3.json("https://raw.githubusercontent.com/freeCodeCamp/ProjectReferenceData/master/global-temperature.json")
     .then(dataObj => {
+    console.log("🚀 ~ file: index.js:55 ~ dataObj:", dataObj)
 
 
 
@@ -75,7 +76,6 @@ d3.json("https://raw.githubusercontent.com/freeCodeCamp/ProjectReferenceData/mas
  
 
     // - RUN THROUGH DATA AND CREATE PLOT-
-    // add circles with x, y values
     //svg.selectAll("circle")
 
  
