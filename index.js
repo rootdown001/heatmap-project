@@ -35,9 +35,17 @@
 
  
 // -CREATE VARIABLES-
+// margins of svg
+const margin = {
+    top: 30,
+    right: 30,
+    bottom: 30,
+    left: 30
+}
+
 // define w & h of svg
-const svg_w = 1100;
-const svg_h = 670;
+const svg_w = 1100 - margin.left - margin.right;
+const svg_h = 670 - margin.top - margin.bottom;
 
 // define padding variable
 const paddingHor = 30;
@@ -48,18 +56,25 @@ const adj = 34;
 // define colors for circle fill - colors picked using "i want hue"
 const colorOne = "#963B00";
 const colorTwo = "#6874FF";
-
+ 
 // enter d3.json api
 d3.json("https://raw.githubusercontent.com/freeCodeCamp/ProjectReferenceData/master/global-temperature.json")
     .then(dataObj => {
     console.log("🚀 ~ file: index.js:55 ~ dataObj:", dataObj)
 
 
+        
+// create x Scale
+    const xScale = d3.scaleBand()
+        .range([0, svg_w])
+        .domain(dataObj.monthlyVariance.map(val => val.year))
+        .padding(0.01)
 
-//     // create x axis
-//     const xAxis = d3.axisBottom(xScale)
+// create xAxis
+        const xAxis = d3.axisBottom(xScale)
+        
 
-//     const timeFormat = d3.timeFormat("%M:%S")
+
 //     // create y axis
 //     const yAxis = d3.axisLeft(yScaleA).tickFormat(timeFormat)
 
@@ -68,6 +83,9 @@ d3.json("https://raw.githubusercontent.com/freeCodeCamp/ProjectReferenceData/mas
                     .append("svg")
                     .attr("height", svg_h)
                     .attr("width", svg_w)
+                    .append("g")
+                    .attr("transform", "translate(" + margin.left + ", " + margin.right + ")");
+
     
     // create tooltip div in .forSvg
     const tooltip = d3.select(".forSvg")
@@ -81,10 +99,10 @@ d3.json("https://raw.githubusercontent.com/freeCodeCamp/ProjectReferenceData/mas
  
 //     // -AXIS-
 //     // add x axis
-//     svg.append("g")
-//         .attr("id", "x-axis")
-//         .attr("transform", "translate(0, " + (svg_h-(paddingVert)) + ")")
-//         .call(xAxis)
+    svg.append("g")
+        .attr("id", "x-axis")
+        .attr("transform", "translate(0, " + svg_h + ")")
+        .call(xAxis)
 
 //     // add y axis
 //     svg.append("g")
