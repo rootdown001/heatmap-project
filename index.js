@@ -45,12 +45,12 @@ const margin = {
 
 // define w & h of svg
 const svg_w = 1100 - margin.left - margin.right;
-const svg_h = 670 - margin.top - margin.bottom;
+const svg_h = 700 - margin.top - margin.bottom;
 
 // define padding variable
 const paddingHor = 30;
 const paddingVert = 30;
-const adj = 34;
+const adj = 30;
 
 
 // define colors for circle fill - colors picked using "i want hue"
@@ -66,25 +66,51 @@ d3.json("https://raw.githubusercontent.com/freeCodeCamp/ProjectReferenceData/mas
         
 // create x Scale
     const xScale = d3.scaleBand()
-        .range([0, svg_w])
+        .range([0, svg_w - 60])
         .domain(dataObj.monthlyVariance.map(val => val.year))
         .padding(0.01)
 
+
+// create y scale
+    const yScale = d3.scaleBand()
+        .range([svg_h - 30, 0])
+        .domain([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].reverse())
+        .padding(0.01)
+
+
 // create xAxis
-        const xAxis = d3.axisBottom(xScale)
-        
+    const xAxis = d3.axisBottom()
+                        .scale(xScale)
+                        // use map to get array of all years from data object
+                        .tickValues(dataObj.monthlyVariance.map(val => val.year)
+                        // use filter to return an array of years by decade
+                                                        .filter(value => value % 10 == 0))
 
 
-//     // create y axis
-//     const yAxis = d3.axisLeft(yScaleA).tickFormat(timeFormat)
+
+// create y axis
+    const yAxis = d3.axisLeft()
+                        .scale(yScale)
+                        .tickValues(yScale.domain())
+                        .tickFormat(m => {
+                            const date = new Date(0);
+                            date.setUTCMonth(m);
+                            const formatDate = d3.utcFormat("%B")
+                            // console.log(formatDate(date))
+                            return formatDate(date)
+                        })
+
+
+    const heading = d3.select(".forSvg")
+                        .append("heading")
 
     // create svg obj - give dimensions
     const svg = d3.select(".forSvg")
                     .append("svg")
-                    .attr("height", svg_h)
-                    .attr("width", svg_w)
+                    .attr("height", svg_h + margin.top + margin.bottom)
+                    .attr("width", svg_w + margin.left + margin.right)
                     .append("g")
-                    .attr("transform", "translate(" + margin.left + ", " + margin.right + ")");
+                    .attr("transform", "translate(" + 30 + ", " + 0 + ")");
 
     
     // create tooltip div in .forSvg
@@ -101,32 +127,23 @@ d3.json("https://raw.githubusercontent.com/freeCodeCamp/ProjectReferenceData/mas
 //     // add x axis
     svg.append("g")
         .attr("id", "x-axis")
-        .attr("transform", "translate(0, " + svg_h + ")")
+        .attr("transform", "translate(60, " + (640 - adj) + ")")
         .call(xAxis)
 
 //     // add y axis
-//     svg.append("g")
-//         .attr("id", "y-axis")
-//         .attr("transform", "translate(" + (paddingHor + 8 + adj) + ", " + (0) + ")")
-//         .call(yAxis)
+    svg.append("g")
+        .attr("id", "y-axis")
+        .attr("transform", "translate(" + (60) + ", " + (0) + ")")
+        .call(yAxis)
 
 
 //     // - TITLES-
 //     // create title
-    svg.append('text')
-        .attr("x", svg_w/2)
-        .attr("y", 20)
-        .attr("text-anchor", "middle")
-        .attr("font-size", "1.7rem")
-        .attr("id", "title")
+    heading.append('h2')
         .text('Monthly Global Land to Surface Temperature');
 
     // create subtitle
-    svg.append('text')
-        .attr("x", svg_w/2)
-        .attr("y", 58)
-        .attr("text-anchor", "middle")
-        .attr("font-size", "1.4rem")
+    heading.append('h3')
         .attr("id", "description")
         .text('Variation from Base Temperature: 1753 - 2015');
 
