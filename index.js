@@ -77,7 +77,23 @@ d3.json("https://raw.githubusercontent.com/freeCodeCamp/ProjectReferenceData/mas
         .domain([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].reverse())
         .padding(0.01)
 
+// create color scale
+    const varianceArr = [];
+    for (let obj of dataObj.monthlyVariance) {
+        varianceArr.push(obj.variance)
+    }
+    // console.log(varianceArr)
 
+    const varianceExtent = d3.extent(varianceArr)
+    //console.log(varianceExtent)
+
+
+    const rectColor = d3.scaleLinear()
+                        .range(["white", "#69b3a2"])
+                        .domain([dataObj.baseTemperature + varianceExtent[0], dataObj.baseTemperature + varianceExtent[1]])
+
+
+    
 // create xAxis
     const xAxis = d3.axisBottom()
                         .scale(xScale)
@@ -122,9 +138,27 @@ d3.json("https://raw.githubusercontent.com/freeCodeCamp/ProjectReferenceData/mas
     // - RUN THROUGH DATA AND CREATE PLOT-
     //svg.selectAll("circle")
 
- 
-//     // -AXIS-
-//     // add x axis
+    svg.selectAll("rect")
+        .data(dataObj.monthlyVariance)
+        .enter()
+        .append("rect")
+        .attr("x", (d) => {
+            //console.log(xScale(d.month - 1))
+            return xScale((d.year))})
+        .attr("y", (d) => {
+            //console.log(yScale(d.year))
+            return yScale(d.month - 1)})
+        .attr("width", (d) => xScale.bandwidth(d.year))
+        .attr("height", (d) => yScale.bandwidth((d.month - 1)))
+        .attr("fill", (d) => rectColor(dataObj.baseTemperature + d.variance))
+        .attr("transform", "translate(" + (margin.left + adj) + ", " + 0 + ")")
+
+
+
+
+
+    // -AXIS-
+    // add x axis
     svg.append("g")
         .attr("id", "x-axis")
         .attr("transform", "translate(60, " + (640 - adj) + ")")
