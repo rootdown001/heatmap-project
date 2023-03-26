@@ -32,7 +32,6 @@
 // User Story #16: I can mouse over an area and see a tooltip with a corresponding id="tooltip" which displays more information about the area.
 
 // User Story #17: My tooltip should have a data-year property that corresponds to the data-year of the active area.
-
  
 // -CREATE VARIABLES-
 // margins of svg
@@ -62,7 +61,10 @@ d3.json("https://raw.githubusercontent.com/freeCodeCamp/ProjectReferenceData/mas
     .then(dataObj => {
     console.log("🚀 ~ file: index.js:55 ~ dataObj:", dataObj)
 
-
+// set base temp
+    const baseTemp = dataObj.baseTemperature
+    console.log("🚀 ~ file: index.js:66 ~ baseTemp:", baseTemp)
+    
         
 // create x Scale
     const xScale = d3.scaleBand()
@@ -88,9 +90,8 @@ d3.json("https://raw.githubusercontent.com/freeCodeCamp/ProjectReferenceData/mas
     //console.log(varianceExtent)
 
 
-    const rectColor = d3.scaleLinear()
-                        .range(["white", "#69b3a2"])
-                        .domain([dataObj.baseTemperature + varianceExtent[0], dataObj.baseTemperature + varianceExtent[1]])
+    const rectColor = d3.scaleSequential(d3.interpolateInferno)
+                        .domain([varianceExtent[0], varianceExtent[1]])
 
 
     
@@ -150,7 +151,7 @@ d3.json("https://raw.githubusercontent.com/freeCodeCamp/ProjectReferenceData/mas
             return yScale(d.month - 1)})
         .attr("width", (d) => xScale.bandwidth(d.year))
         .attr("height", (d) => yScale.bandwidth((d.month - 1)))
-        .attr("fill", (d) => rectColor(dataObj.baseTemperature + d.variance))
+        .attr("fill", (d) => rectColor(d.variance))
         .attr("transform", "translate(" + (margin.left + adj) + ", " + 0 + ")")
 
 
