@@ -37,14 +37,14 @@
 // margins of svg
 const margin = {
     top: 30,
-    right: 30,
+    right: 100,
     bottom: 30,
     left: 30
 }
 
 // define w & h of svg
-const svg_w = 1100 - margin.left - margin.right;
-const svg_h = 700 - margin.top - margin.bottom;
+const svg_w = 1200 - margin.left - margin.right;
+const svg_h = 620 - margin.top - margin.bottom;
 
 // define padding variable
 const paddingHor = 30;
@@ -70,14 +70,14 @@ d3.json("https://raw.githubusercontent.com/freeCodeCamp/ProjectReferenceData/mas
     const xScale = d3.scaleBand()
         .range([0, svg_w - 60])
         .domain(dataObj.monthlyVariance.map(val => val.year))
-        .padding(0.01)
+        .padding(0)
 
 
 // create y scale
     const yScale = d3.scaleBand()
         .range([svg_h - 30, 0])
         .domain([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].reverse())
-        .padding(0.01)
+        .padding(0)
 
 // create color scale
     const varianceArr = [];
@@ -99,9 +99,9 @@ d3.json("https://raw.githubusercontent.com/freeCodeCamp/ProjectReferenceData/mas
     const xAxis = d3.axisBottom()
                         .scale(xScale)
                         // use map to get array of all years from data object
-                        .tickValues(dataObj.monthlyVariance.map(val => val.year)
+                        .tickValues(xScale.domain()
                         // use filter to return an array of years by decade
-                                                        .filter(value => value % 10 == 0))
+                        .filter(value => value % 10 === 0))
 
 
 
@@ -144,15 +144,29 @@ d3.json("https://raw.githubusercontent.com/freeCodeCamp/ProjectReferenceData/mas
         .enter()
         .append("rect")
         .attr("x", (d) => {
-            //console.log(xScale(d.month - 1))
             return xScale((d.year))})
         .attr("y", (d) => {
-            //console.log(yScale(d.year))
             return yScale(d.month - 1)})
         .attr("width", (d) => xScale.bandwidth(d.year))
         .attr("height", (d) => yScale.bandwidth((d.month - 1)))
         .attr("fill", (d) => rectColor(d.variance))
         .attr("transform", "translate(" + (margin.left + adj) + ", " + 0 + ")")
+        .attr("class", "cell")
+        .attr("data-month", (d) => d.month - 1)
+        .attr("data-year", (d) => d.year)
+        .attr("data-temp", (d) => d.variance)
+        .on("mouseover", function(event, d) {
+            const date = new Date(d.year, (d.month - 1))
+            tooltip.html(d3.utcFormat("%B, %Y")(date) + "<br>" + "Variance: " + d.variance)
+                .style("display", "block")
+                .attr("data-year", d.year)
+                .style("left", event.pageX + 20 + "px")
+                .style("top", event.pageY - 80 + "px")
+                .style("background-color", "lightgray")
+        })
+        .on("mouseout", function() {
+            tooltip.style("display", "none")
+        })
 
 
 
@@ -162,7 +176,7 @@ d3.json("https://raw.githubusercontent.com/freeCodeCamp/ProjectReferenceData/mas
     // add x axis
     svg.append("g")
         .attr("id", "x-axis")
-        .attr("transform", "translate(60, " + (640 - adj) + ")")
+        .attr("transform", "translate(60, " + (560 - adj) + ")")
         .call(xAxis)
 
 //     // add y axis
@@ -175,6 +189,7 @@ d3.json("https://raw.githubusercontent.com/freeCodeCamp/ProjectReferenceData/mas
 //     // - TITLES-
 //     // create title
     heading.append('h2')
+        .attr("id", "title")
         .text('Monthly Global Land to Surface Temperature');
 
     // create subtitle
@@ -182,32 +197,24 @@ d3.json("https://raw.githubusercontent.com/freeCodeCamp/ProjectReferenceData/mas
         .attr("id", "description")
         .text('Variation from Base Temperature: 1753 - 2015');
 
-//     // title fo y axis
-//     svg.append("text")
-//         .attr("transform", "rotate(-90)")
-//         .attr("x", -390)
-//         .attr("y", 14)
-//         .attr("font-size", "1.1rem")
-//         .text("Y Title")
+    // title fo y axis
+    svg.append("text")
+        .attr("transform", "rotate(-90)")
+        .attr("x", -280)
+        .attr("y", 1)
+        .attr("font-size", "1rem")
+        .text("Months")
 
+    // create legend
+    const legend = d3.legendColor()
+                    .scale(rectColor)
+                    .cells(8)
 
-    // -LEGEND-
-    // legend (i linked to additional script in HTML head for this. it doesn't come with d3)
-    // create color scale for legend
-//     const colorScale = d3.scaleOrdinal()
-//         .domain(["colorOne", "colorTwo"])
-//         .range([colorOne, colorTwo]);
-
-//     // add legend
-//     const legend = d3.legendColor()
-//         //.title("Legend")
-//         .scale(colorScale);
-
-//     // add g element and call legend obj
-//     svg.append("g")
-//         .attr("id", "legend")
-//         .attr("transform", "translate(" + (svg_w - 300) + "," + (svg_h - 500) + ")")
-//         .call(legend);
+    // add g element and call legend obj
+    svg.append("g")
+        .attr("id", "legend")
+        .attr("transform", "translate(" + (svg_w + 20) + "," + (svg_h - 350) + ")")
+        .call(legend);
     
 
     // -EXIT-
