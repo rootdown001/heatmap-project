@@ -59,12 +59,9 @@ const colorTwo = "#6874FF";
 // enter d3.json api
 d3.json("https://raw.githubusercontent.com/freeCodeCamp/ProjectReferenceData/master/global-temperature.json")
     .then(dataObj => {
-    console.log("🚀 ~ file: index.js:55 ~ dataObj:", dataObj)
 
 // set base temp
-    const baseTemp = dataObj.baseTemperature
-    console.log("🚀 ~ file: index.js:66 ~ baseTemp:", baseTemp)
-    
+    const baseTemp = dataObj.baseTemperature    
         
 // create x Scale
     const xScale = d3.scaleBand()
@@ -84,15 +81,11 @@ d3.json("https://raw.githubusercontent.com/freeCodeCamp/ProjectReferenceData/mas
     for (let obj of dataObj.monthlyVariance) {
         varianceArr.push(obj.variance)
     }
-    // console.log(varianceArr)
 
     const varianceExtent = d3.extent(varianceArr)
-    //console.log(varianceExtent)
-
 
     const rectColor = d3.scaleSequential(d3.interpolateInferno)
                         .domain([varianceExtent[0], varianceExtent[1]])
-
 
     
 // create xAxis
@@ -102,8 +95,6 @@ d3.json("https://raw.githubusercontent.com/freeCodeCamp/ProjectReferenceData/mas
                         .tickValues(xScale.domain()
                         // use filter to return an array of years by decade
                         .filter(value => value % 10 === 0))
-
-
 
 // create y axis
     const yAxis = d3.axisLeft()
@@ -136,9 +127,7 @@ d3.json("https://raw.githubusercontent.com/freeCodeCamp/ProjectReferenceData/mas
                     .attr("id", "tooltip")
  
 
-    // - RUN THROUGH DATA AND CREATE PLOT-
-    //svg.selectAll("circle")
-
+    // - RUN THROUGH DATA AND CREATE MAP-
     svg.selectAll("rect")
         .data(dataObj.monthlyVariance)
         .enter()
@@ -168,10 +157,6 @@ d3.json("https://raw.githubusercontent.com/freeCodeCamp/ProjectReferenceData/mas
             tooltip.style("display", "none")
         })
 
-
-
-
-
     // -AXIS-
     // add x axis
     svg.append("g")
@@ -179,15 +164,15 @@ d3.json("https://raw.githubusercontent.com/freeCodeCamp/ProjectReferenceData/mas
         .attr("transform", "translate(60, " + (560 - adj) + ")")
         .call(xAxis)
 
-//     // add y axis
+    // add y axis
     svg.append("g")
         .attr("id", "y-axis")
         .attr("transform", "translate(" + (60) + ", " + (0) + ")")
         .call(yAxis)
 
 
-//     // - TITLES-
-//     // create title
+    // - TITLES-
+    // create title
     heading.append('h2')
         .attr("id", "title")
         .text('Monthly Global Land to Surface Temperature');
